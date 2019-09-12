@@ -75,11 +75,13 @@ function bakePlaceholders(messages) {
 
     if (placeholders) {
       for (const [placeholder, {content}] of Object.entries(placeholders)) {
-        const escapedPlaceholder = '$' + placeholder + '$';
-        if (!message.includes(escapedPlaceholder)) {
+        if (!message.includes('$' + placeholder + '$')) {
           throw Error(`Provided placeholder "${placeholder}" not found in message "${message}".`);
         }
-        message = message.replace(escapedPlaceholder, content);
+        // Need a global replace due to plural ICU copying placeholders
+        // (and therefore ICU vars) multiple times.
+        const regex = new RegExp('\\$' + placeholder + '\\$', 'g');
+        message = message.replace(regex, content);
       }
     }
 

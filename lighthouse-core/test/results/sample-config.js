@@ -15,6 +15,7 @@ const budgetedConfig = {
   settings: {
     throttlingMethod: 'devtools',
     budgets: [{
+      path: '/',
       resourceCounts: [
         {resourceType: 'total', budget: 10},
         {resourceType: 'stylesheet', budget: 2},

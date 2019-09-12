@@ -9,9 +9,11 @@ const path = require('path');
 const isDeepEqual = require('lodash.isequal');
 const log = require('lighthouse-logger');
 const MessageFormat = require('intl-messageformat').default;
-const MessageParser = require('intl-messageformat-parser');
 const lookupClosestLocale = require('lookup-closest-locale');
 const LOCALES = require('./locales.js');
+
+/** @typedef {import('intl-messageformat-parser').Element} MessageElement */
+/** @typedef {import('intl-messageformat-parser').ArgumentElement} ArgumentElement */
 
 const LH_ROOT = path.join(__dirname, '../../../');
 const MESSAGE_INSTANCE_ID_REGEX = /(.* \| .*) # (\d+)$/;
@@ -19,18 +21,26 @@ const MESSAGE_INSTANCE_ID_REGEX = /(.* \| .*) # (\d+)$/;
 const MESSAGE_INSTANCE_ID_QUICK_REGEX = / # \d+$/;
 
 (() => {
-  // Node usually doesn't come with the locales we want built-in, so load the polyfill if we can.
+  // Node without full-icu doesn't come with the locales we want built-in. Load the polyfill if needed.
+  // See https://nodejs.org/api/intl.html#intl_options_for_building_node_js
 
-  try {
-    // @ts-ignore
-    const IntlPolyfill = require('intl');
-    // In browser environments where we don't need the polyfill, this won't exist
-    if (!IntlPolyfill.NumberFormat) return;
+  // Conditionally polyfills itself. Bundler removes this dep, so this will be a no-op in browsers.
+  // @ts-ignore
+  require('intl-pluralrules');
 
+  // @ts-ignore
+  const IntlPolyfill = require('intl');
+
+  // The bundler also removes this dep, so there's nothing to do if it's empty.
+  if (!IntlPolyfill.NumberFormat) return;
+
+  // Check if global implementation supports a minimum set of locales.
+  const minimumLocales = ['en', 'es', 'ru', 'zh'];
+  const supportedLocales = Intl.NumberFormat.supportedLocalesOf(minimumLocales);
+
+  if (supportedLocales.length !== minimumLocales.length) {
     Intl.NumberFormat = IntlPolyfill.NumberFormat;
     Intl.DateTimeFormat = IntlPolyfill.DateTimeFormat;
-  } catch (_) {
-    log.warn('i18n', 'Failed to install `intl` polyfill');
   }
 })();
 
@@ -126,40 +136,109 @@ function lookupLocale(locale) {
 }
 
 /**
+ * Preformat values for the message based on how they're used, like KB or milliseconds.
  * @param {string} icuMessage
+ * @param {MessageFormat} messageFormatter
  * @param {Record<string, string | number>} [values]
+ * @return {Record<string, string | number>}
  */
-function _preprocessMessageValues(icuMessage, values = {}) {
+function _preformatValues(icuMessage, messageFormatter, values = {}) {
   const clonedValues = JSON.parse(JSON.stringify(values));
-  const parsed = MessageParser.parse(icuMessage);
-  // Throw an error if a message's value isn't provided
-  parsed.elements
-    .filter(el => el.type === 'argumentElement')
-    .forEach(el => {
-      if (el.id && (el.id in values) === false) {
-        throw new Error(`ICU Message contains a value reference ("${el.id}") that wasn't provided`);
-      }
-    });
 
-  // Round all milliseconds to the nearest 10
-  parsed.elements
-    .filter(el => el.format && el.format.style === 'milliseconds')
-    // @ts-ignore - el.id is always defined when el.format is defined
-    .forEach(el => (clonedValues[el.id] = Math.round(clonedValues[el.id] / 10) * 10));
+  const elements = collectAllCustomElementsFromICU(messageFormatter.getAst().elements);
 
-  // Convert all seconds to the correct unit
-  parsed.elements
-    .filter(el => el.format && el.format.style === 'seconds' && el.id === 'timeInMs')
-    // @ts-ignore - el.id is always defined when el.format is defined
-    .forEach(el => (clonedValues[el.id] = Math.round(clonedValues[el.id] / 100) / 10));
+  return _processParsedElements(icuMessage, Array.from(elements.values()), clonedValues);
+}
 
-  // Replace all the bytes with KB
-  parsed.elements
-    .filter(el => el.format && el.format.style === 'bytes')
-    // @ts-ignore - el.id is always defined when el.format is defined
-    .forEach(el => (clonedValues[el.id] = clonedValues[el.id] / 1024));
+/**
+ * Function to retrieve all 'argumentElement's from an ICU message. An argumentElement
+ * is an ICU element with an argument in it, like '{varName}' or '{varName, number, bytes}'. This
+ * differs from 'messageElement's which are just arbitrary text in a message.
+ *
+ * Notes:
+ *  This function will recursively inspect plural elements for nested argumentElements.
+ *
+ *  We need to find all the elements from the plural format sections, but
+ *  they need to be deduplicated. I.e. "=1{hello {icu}} =other{hello {icu}}"
+ *  the variable "icu" would appear twice if it wasn't de duplicated. And they cannot
+ *  be stored in a set because they are not equal since their locations are different,
+ *  thus they are stored via a Map keyed on the "id" which is the ICU varName.
+ *
+ * @param {Array<MessageElement>} icuElements
+ * @param {Map<string, ArgumentElement>} [seenElementsById]
+ * @return {Map<string, ArgumentElement>}
+ */
+function collectAllCustomElementsFromICU(icuElements, seenElementsById = new Map()) {
+  for (const el of icuElements) {
+    // We are only interested in elements that need ICU formatting (argumentElements)
+    if (el.type !== 'argumentElement') continue;
 
-  return clonedValues;
+    seenElementsById.set(el.id, el);
+
+    // Plurals need to be inspected recursively
+    if (!el.format || el.format.type !== 'pluralFormat') continue;
+    // Look at all options of the plural (=1{} =other{}...)
+    for (const option of el.format.options) {
+      // Run collections on each option's elements
+      collectAllCustomElementsFromICU(option.value.elements, seenElementsById);
+    }
+  }
+
+  return seenElementsById;
+}
+
+/**
+ * This function takes a list of ICU argumentElements and a map of values and
+ * will apply Lighthouse custom formatting to the values based on the argumentElement
+ * format style.
+ *
+ * @param {string} icuMessage
+ * @param {Array<ArgumentElement>} argumentElements
+ * @param {Record<string, string | number>} [values]
+ * @return {Record<string, string | number>}
+ */
+function _processParsedElements(icuMessage, argumentElements, values = {}) {
+  for (const {id, format} of argumentElements) {
+    // Throw an error if a message's value isn't provided
+    if (id && (id in values) === false) {
+      throw new Error(`ICU Message "${icuMessage}" contains a value reference ("${id}") ` +
+        `that wasn't provided`);
+    }
+
+    // Direct `{id}` replacement and non-numeric values need no formatting.
+    if (!format || format.type !== 'numberFormat') continue;
+
+    const value = values[id];
+    if (typeof value !== 'number') {
+      throw new Error(`ICU Message "${icuMessage}" contains a numeric reference ("${id}") ` +
+        'but provided value was not a number');
+    }
+
+    // Format values for known styles.
+    if (format.style === 'milliseconds') {
+      // Round all milliseconds to the nearest 10.
+      values[id] = Math.round(value / 10) * 10;
+    } else if (format.style === 'seconds' && id === 'timeInMs') {
+      // Convert all seconds to the correct unit (currently only for `timeInMs`).
+      values[id] = Math.round(value / 100) / 10;
+    } else if (format.style === 'bytes') {
+      // Replace all the bytes with KB.
+      values[id] = value / 1024;
+    }
+  }
+
+  // Throw an error if a value is provided but has no placeholder in the message.
+  for (const valueId of Object.keys(values)) {
+    // errorCode is a special case always allowed to help ease of LHError use.
+    if (valueId === 'errorCode') continue;
+
+    if (!argumentElements.find(el => el.id === valueId)) {
+      throw new Error(`Provided value "${valueId}" does not match any placeholder in ` +
+        `ICU message "${icuMessage}"`);
+    }
+  }
+
+  return values;
 }
 
 /**
@@ -205,12 +284,13 @@ function _formatIcuMessage(locale, icuMessageId, uiStringMessage, values) {
 
   // when using accented english, force the use of a different locale for number formatting
   const localeForMessageFormat = (locale === 'en-XA' || locale === 'en-XL') ? 'de-DE' : locale;
-  // pre-process values for the message format like KB and milliseconds
-  const valuesForMessageFormat = _preprocessMessageValues(localeMessage, values);
 
   const formatter = new MessageFormat(localeMessage, localeForMessageFormat, formats);
-  const formattedString = formatter.format(valuesForMessageFormat);
 
+  // preformat values for the message format like KB and milliseconds
+  const valuesForMessageFormat = _preformatValues(localeMessage, formatter, values);
+
+  const formattedString = formatter.format(valuesForMessageFormat);
   return {formattedString, icuMessage: localeMessage};
 }
 
@@ -393,6 +473,19 @@ function replaceIcuMessageInstanceIds(inputObject, locale) {
   return icuMessagePaths;
 }
 
+/** @typedef {import('./locales').LhlMessages} LhlMessages */
+
+/**
+ * Populate the i18n string lookup dict with locale data
+ * Used when the host environment selects the locale and serves lighthouse the intended locale file
+ * @see https://docs.google.com/document/d/1jnt3BqKB-4q3AE94UWFA0Gqspx8Sd_jivlB7gQMlmfk/edit
+ * @param {LH.Locale} locale
+ * @param {LhlMessages} lhlMessages
+ */
+function registerLocaleData(locale, lhlMessages) {
+  LOCALES[locale] = lhlMessages;
+}
+
 module.exports = {
   _formatPathAsString,
   _ICUMsgNotFoundMsg,
@@ -404,4 +497,6 @@ module.exports = {
   getFormattedFromIdAndValues,
   replaceIcuMessageInstanceIds,
   isIcuMessage,
+  collectAllCustomElementsFromICU,
+  registerLocaleData,
 };

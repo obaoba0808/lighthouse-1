@@ -8,7 +8,7 @@
             "title": "`[accesskey]` values are unique"
         },
         "appcache-manifest": {
-            "description": "Application Cache is deprecated. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/appcache).",
+            "description": "Application Cache is deprecated. [Learn more](https://web.dev/appcache-manifest).",
             "displayValue": "Found \"clock.appcache\"",
             "id": "appcache-manifest",
             "score": 0.0,
@@ -16,7 +16,7 @@
             "title": "Uses Application Cache"
         },
         "apple-touch-icon": {
-            "description": "For ideal appearance on iOS when users add to the home screen, define an apple-touch-icon. It must point to a non-transparent 192px (or 180px) square PNG. [Learn More](https://developers.google.com/web/fundamentals/design-and-ux/browser-customization/).",
+            "description": "For ideal appearance on iOS when users add a progressive web app to the home screen, define an `apple-touch-icon`. It must point to a non-transparent 192px (or 180px) square PNG. [Learn More](https://developers.google.com/web/fundamentals/design-and-ux/browser-customization/).",
             "id": "apple-touch-icon",
             "score": 0.0,
             "scoreDisplayMode": "binary",
@@ -42,7 +42,7 @@
             "id": "aria-required-children",
             "score": null,
             "scoreDisplayMode": "notApplicable",
-            "title": "Elements with `[role]` that require specific children `[role]`s, are present"
+            "title": "Elements with an ARIA `[role]` that require children to contain a specific `[role]` have all required children."
         },
         "aria-required-parent": {
             "description": "Some ARIA child roles must be contained by specific parent roles to properly perform their intended accessibility functions. [Learn more](https://web.dev/aria-required-parent/).",
@@ -170,7 +170,7 @@
             "title": "The page contains a heading, skip link, or landmark region"
         },
         "canonical": {
-            "description": "Canonical links suggest which URL to show in search results. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/canonical).",
+            "description": "Canonical links suggest which URL to show in search results. [Learn more](https://web.dev/canonical).",
             "id": "canonical",
             "score": null,
             "scoreDisplayMode": "notApplicable",
@@ -225,7 +225,7 @@
             "title": "Background and foreground colors do not have a sufficient contrast ratio."
         },
         "content-width": {
-            "description": "If the width of your app's content doesn't match the width of the viewport, your app might not be optimized for mobile screens. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/content-sized-correctly-for-viewport).",
+            "description": "If the width of your app's content doesn't match the width of the viewport, your app might not be optimized for mobile screens. [Learn more](https://web.dev/content-width).",
             "id": "content-width",
             "score": 1.0,
             "scoreDisplayMode": "binary",
@@ -399,11 +399,11 @@
             "title": "`<dl>`'s contain only properly-ordered `<dt>` and `<dd>` groups, `<script>` or `<template>` elements."
         },
         "deprecations": {
-            "description": "Deprecated APIs will eventually be removed from the browser. [Learn more](https://www.chromestatus.com/features#deprecated).",
+            "description": "Deprecated APIs will eventually be removed from the browser. [Learn more](https://web.dev/deprecations).",
             "details": {
                 "headings": [
                     {
-                        "itemType": "code",
+                        "itemType": "text",
                         "key": "value",
                         "text": "Deprecation / Warning"
                     },
@@ -483,7 +483,7 @@
             "title": "Definition list items are wrapped in `<dl>` elements"
         },
         "doctype": {
-            "description": "Specifying a doctype prevents the browser from switching to quirks-mode. Read more on the [MDN Web Docs page](https://developer.mozilla.org/en-US/docs/Glossary/Doctype)",
+            "description": "Specifying a doctype prevents the browser from switching to quirks-mode. [Learn more](https://web.dev/doctype).",
             "id": "doctype",
             "score": 1.0,
             "scoreDisplayMode": "binary",
@@ -502,7 +502,7 @@
             "title": "Document has a `<title>` element"
         },
         "dom-size": {
-            "description": "Browser engineers recommend pages contain fewer than ~1,500 DOM elements. The sweet spot is a tree depth < 32 elements and fewer than 60 children/parent element. A large DOM can increase memory usage, cause longer [style calculations](https://developers.google.com/web/fundamentals/performance/rendering/reduce-the-scope-and-complexity-of-style-calculations), and produce costly [layout reflows](https://developers.google.com/speed/articles/reflow). [Learn more](https://developers.google.com/web/tools/lighthouse/audits/dom-size).",
+            "description": "Browser engineers recommend pages contain fewer than ~1,500 DOM elements. The sweet spot is a tree depth < 32 elements and fewer than 60 children/parent element. A large DOM can increase memory usage, cause longer [style calculations](https://developers.google.com/web/fundamentals/performance/rendering/reduce-the-scope-and-complexity-of-style-calculations), and produce costly [layout reflows](https://developers.google.com/speed/articles/reflow). [Learn more](https://web.dev/dom-size).",
             "details": {
                 "headings": [
                     {
@@ -580,7 +580,7 @@
             "title": "Use video formats for animated content"
         },
         "errors-in-console": {
-            "description": "Errors logged to the console indicate unresolved problems. They can come from network request failures and other browser concerns.",
+            "description": "Errors logged to the console indicate unresolved problems. They can come from network request failures and other browser concerns. [Learn more](https://web.dev/errors-in-console)",
             "details": {
                 "headings": [
                     {
@@ -639,7 +639,7 @@
             "title": "Estimated Input Latency"
         },
         "external-anchors-use-rel-noopener": {
-            "description": "Add `rel=\"noopener\"` or `rel=\"noreferrer\"` to any external links to improve performance and prevent security vulnerabilities. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/noopener).",
+            "description": "Add `rel=\"noopener\"` or `rel=\"noreferrer\"` to any external links to improve performance and prevent security vulnerabilities. [Learn more](https://web.dev/external-anchors-use-rel-noopener).",
             "details": {
                 "headings": [
                     {
@@ -754,7 +754,7 @@
             "warnings": []
         },
         "font-size": {
-            "description": "Font sizes less than 12px are too small to be legible and require mobile visitors to \u201cpinch to zoom\u201d in order to read. Strive to have >60% of page text \u226512px. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/font-sizes).",
+            "description": "Font sizes less than 12px are too small to be legible and require mobile visitors to \u201cpinch to zoom\u201d in order to read. Strive to have >60% of page text \u226512px. [Learn more](https://web.dev/font-size).",
             "details": {
                 "headings": [
                     {
@@ -801,7 +801,7 @@
             "title": "`<frame>` or `<iframe>` elements have a title"
         },
         "geolocation-on-start": {
-            "description": "Users are mistrustful of or confused by sites that request their location without context. Consider tying the request to a user action instead. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/geolocation-on-load).",
+            "description": "Users are mistrustful of or confused by sites that request their location without context. Consider tying the request to a user action instead. [Learn more](https://web.dev/geolocation-on-start).",
             "details": {
                 "headings": [
                     {
@@ -840,7 +840,7 @@
             "title": "Headings don't skip levels"
         },
         "hreflang": {
-            "description": "hreflang links tell search engines what version of a page they should list in search results for a given language or region. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/hreflang).",
+            "description": "hreflang links tell search engines what version of a page they should list in search results for a given language or region. [Learn more](https://web.dev/hreflang).",
             "details": {
                 "headings": [],
                 "items": [],
@@ -897,7 +897,7 @@
             "title": "`<html>` element has a valid value for its `[lang]` attribute"
         },
         "http-status-code": {
-            "description": "Pages with unsuccessful HTTP status codes may not be indexed properly. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/successful-http-code).",
+            "description": "Pages with unsuccessful HTTP status codes may not be indexed properly. [Learn more](https://web.dev/http-status-code).",
             "id": "http-status-code",
             "score": 1.0,
             "scoreDisplayMode": "binary",
@@ -974,7 +974,7 @@
             "title": "Image elements do not have `[alt]` attributes"
         },
         "image-aspect-ratio": {
-            "description": "Image display dimensions should match natural aspect ratio. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/aspect-ratio).",
+            "description": "Image display dimensions should match natural aspect ratio. [Learn more](https://web.dev/image-aspect-ratio).",
             "details": {
                 "headings": [
                     {
@@ -1021,7 +1021,7 @@
             "title": "`<input type=\"image\">` elements have `[alt]` text"
         },
         "installable-manifest": {
-            "description": "Browsers can proactively prompt users to add your app to their homescreen, which can lead to higher engagement. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/install-prompt).",
+            "description": "Browsers can proactively prompt users to add your app to their homescreen, which can lead to higher engagement. [Learn more](https://web.dev/installable-manifest).",
             "details": {
                 "items": [
                     {
@@ -1057,7 +1057,7 @@
             "title": "Interactive elements indicate their purpose and state"
         },
         "is-crawlable": {
-            "description": "Search engines are unable to include your pages in search results if they don't have permission to crawl them. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/indexing).",
+            "description": "Search engines are unable to include your pages in search results if they don't have permission to crawl them. [Learn more](https://web.dev/is-crawable).",
             "details": {
                 "headings": [],
                 "items": [],
@@ -1069,7 +1069,7 @@
             "title": "Page isn\u2019t blocked from indexing"
         },
         "is-on-https": {
-            "description": "All sites should be protected with HTTPS, even ones that don't handle sensitive data. HTTPS prevents intruders from tampering with or passively listening in on the communications between your app and your users, and is a prerequisite for HTTP/2 and many new web platform APIs. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/https).",
+            "description": "All sites should be protected with HTTPS, even ones that don't handle sensitive data. HTTPS prevents intruders from tampering with or passively listening in on the communications between your app and your users, and is a prerequisite for HTTP/2 and many new web platform APIs. [Learn more](https://web.dev/is-on-https).",
             "details": {
                 "headings": [
                     {
@@ -1092,7 +1092,7 @@
             "title": "Does not use HTTPS"
         },
         "js-libraries": {
-            "description": "All front-end JavaScript libraries detected on the page.",
+            "description": "All front-end JavaScript libraries detected on the page. [Learn more](https://web.dev/js-libraries).",
             "details": {
                 "headings": [
                     {
@@ -1244,7 +1244,7 @@
             "title": "Links do not have a discernible name"
         },
         "link-text": {
-            "description": "Descriptive link text helps search engines understand your content. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/descriptive-link-text).",
+            "description": "Descriptive link text helps search engines understand your content. [Learn more](https://web.dev/link-text).",
             "details": {
                 "headings": [],
                 "items": [],
@@ -1271,7 +1271,7 @@
             "title": "List items (`<li>`) are contained within `<ul>` or `<ol>` parent elements"
         },
         "load-fast-enough-for-pwa": {
-            "description": "A fast page load over a cellular network ensures a good mobile user experience. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/fast-3g).",
+            "description": "A fast page load over a cellular network ensures a good mobile user experience. [Learn more](https://web.dev/load-fast-enough-for-pwa).",
             "id": "load-fast-enough-for-pwa",
             "numericValue": 4927.278,
             "score": 1.0,
@@ -1455,7 +1455,7 @@
             "title": "Max Potential First Input Delay"
         },
         "meta-description": {
-            "description": "Meta descriptions may be included in search results to concisely summarize page content. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/description).",
+            "description": "Meta descriptions may be included in search results to concisely summarize page content. [Learn more](https://web.dev/meta-description).",
             "id": "meta-description",
             "score": 0.0,
             "scoreDisplayMode": "binary",
@@ -1839,7 +1839,7 @@
             "title": "Server Backend Latencies"
         },
         "no-document-write": {
-            "description": "For users on slow connections, external scripts dynamically injected via `document.write()` can delay page load by tens of seconds. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/document-write).",
+            "description": "For users on slow connections, external scripts dynamically injected via `document.write()` can delay page load by tens of seconds. [Learn more](https://web.dev/no-document-write).",
             "details": {
                 "headings": [
                     {
@@ -1875,7 +1875,7 @@
             "title": "Uses `document.write()`"
         },
         "no-vulnerable-libraries": {
-            "description": "Some third-party scripts may contain known security vulnerabilities that are easily identified and exploited by attackers. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/vulnerabilities).",
+            "description": "Some third-party scripts may contain known security vulnerabilities that are easily identified and exploited by attackers. [Learn more](https://web.dev/no-vulnerable-libraries).",
             "details": {
                 "headings": [
                     {
@@ -1915,7 +1915,7 @@
             "title": "Includes front-end JavaScript libraries with known security vulnerabilities"
         },
         "notification-on-start": {
-            "description": "Users are mistrustful of or confused by sites that request to send notifications without context. Consider tying the request to user gestures instead. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/notifications-on-load).",
+            "description": "Users are mistrustful of or confused by sites that request to send notifications without context. Consider tying the request to user gestures instead. [Learn more](https://web.dev/notification-on-start).",
             "details": {
                 "headings": [
                     {
@@ -1993,12 +1993,12 @@
             "title": "`<object>` elements do not have `[alt]` text"
         },
         "offline-start-url": {
-            "description": "A service worker enables your web app to be reliable in unpredictable network conditions. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/http-200-when-offline).",
+            "description": "A service worker enables your web app to be reliable in unpredictable network conditions. [Learn more](https://web.dev/offline-start-url).",
             "explanation": "No usable web app manifest found on page.",
             "id": "offline-start-url",
             "score": 0.0,
             "scoreDisplayMode": "binary",
-            "title": "start_url does not respond with a 200 when offline",
+            "title": "`start_url` does not respond with a 200 when offline",
             "warnings": []
         },
         "offscreen-content-hidden": {
@@ -2025,7 +2025,7 @@
             "warnings": []
         },
         "password-inputs-can-be-pasted-into": {
-            "description": "Preventing password pasting undermines good security policy. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/password-pasting).",
+            "description": "Preventing password pasting undermines good security policy. [Learn more](https://web.dev/password-inputs-can-be-pasted-into).",
             "details": {
                 "headings": [
                     {
@@ -2158,7 +2158,7 @@
             "title": "Performance budget"
         },
         "plugins": {
-            "description": "Search engines can't index plugin content, and many devices restrict plugins or don't support them. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/plugins).",
+            "description": "Search engines can't index plugin content, and many devices restrict plugins or don't support them. [Learn more](https://web.dev/plugins).",
             "details": {
                 "headings": [],
                 "items": [],
@@ -2170,21 +2170,21 @@
             "title": "Document avoids plugins"
         },
         "pwa-cross-browser": {
-            "description": "To reach the most number of users, sites should work across every major browser. [Learn more](https://developers.google.com/web/progressive-web-apps/checklist#site-works-cross-browser).",
+            "description": "To reach the most number of users, sites should work across every major browser. [Learn more](https://web.dev/pwa-cross-browser).",
             "id": "pwa-cross-browser",
             "score": null,
             "scoreDisplayMode": "manual",
             "title": "Site works cross-browser"
         },
         "pwa-each-page-has-url": {
-            "description": "Ensure individual pages are deep linkable via the URLs and that URLs are unique for the purpose of shareability on social media. [Learn more](https://developers.google.com/web/progressive-web-apps/checklist#each-page-has-a-url).",
+            "description": "Ensure individual pages are deep linkable via URL and that URLs are unique for the purpose of shareability on social media. [Learn more](https://web.dev/pwa-each-page-has-url).",
             "id": "pwa-each-page-has-url",
             "score": null,
             "scoreDisplayMode": "manual",
             "title": "Each page has a URL"
         },
         "pwa-page-transitions": {
-            "description": "Transitions should feel snappy as you tap around, even on a slow network, a key to perceived performance. [Learn more](https://developers.google.com/web/progressive-web-apps/checklist#page-transitions-dont-feel-like-they-block-on-the-network).",
+            "description": "Transitions should feel snappy as you tap around, even on a slow network. This experience is key to a user's perception of performance. [Learn more](https://web.dev/pwa-page-transitions).",
             "id": "pwa-page-transitions",
             "score": null,
             "scoreDisplayMode": "manual",
@@ -2205,7 +2205,7 @@
             "title": "Avoid multiple page redirects"
         },
         "redirects-http": {
-            "description": "If you've already set up HTTPS, make sure that you redirect all HTTP traffic to HTTPS. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/http-redirects-to-https).",
+            "description": "If you've already set up HTTPS, make sure that you redirect all HTTP traffic to HTTPS in order to enable secure web features for all your users. [Learn more](https://web.dev/redirects-http).",
             "id": "redirects-http",
             "score": 0.0,
             "scoreDisplayMode": "binary",
@@ -2353,7 +2353,7 @@
             "title": "Keep request counts low and transfer sizes small"
         },
         "robots-txt": {
-            "description": "If your robots.txt file is malformed, crawlers may not be able to understand how you want your website to be crawled or indexed.",
+            "description": "If your robots.txt file is malformed, crawlers may not be able to understand how you want your website to be crawled or indexed. [Learn more](https://web.dev/robots-txt).",
             "id": "robots-txt",
             "score": null,
             "scoreDisplayMode": "notApplicable",
@@ -2423,11 +2423,11 @@
             "title": "Screenshot Thumbnails"
         },
         "service-worker": {
-            "description": "The service worker is the technology that enables your app to use many Progressive Web App features, such as offline, add to homescreen, and push notifications. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/registered-service-worker).",
+            "description": "The service worker is the technology that enables your app to use many Progressive Web App features, such as offline, add to homescreen, and push notifications. [Learn more](https://web.dev/service-worker).",
             "id": "service-worker",
             "score": 0.0,
             "scoreDisplayMode": "binary",
-            "title": "Does not register a service worker that controls page and start_url"
+            "title": "Does not register a service worker that controls page and `start_url`"
         },
         "speed-index": {
             "description": "Speed Index shows how quickly the contents of a page are visibly populated. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/speed-index).",
@@ -2439,7 +2439,7 @@
             "title": "Speed Index"
         },
         "splash-screen": {
-            "description": "A themed splash screen ensures a high-quality experience when users launch your app from their homescreens. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/custom-splash-screen).",
+            "description": "A themed splash screen ensures a high-quality experience when users launch your app from their homescreens. [Learn more](https://web.dev/splash-screen).",
             "details": {
                 "items": [
                     {
@@ -2459,7 +2459,7 @@
             "title": "Is not configured for a custom splash screen"
         },
         "structured-data": {
-            "description": "Run the [Structured Data Testing Tool](https://search.google.com/structured-data/testing-tool/) and the [Structured Data Linter](http://linter.structured-data.org/) to validate structured data. [Learn more](https://developers.google.com/search/docs/guides/mark-up-content).",
+            "description": "Run the [Structured Data Testing Tool](https://search.google.com/structured-data/testing-tool/) and the [Structured Data Linter](http://linter.structured-data.org/) to validate structured data. [Learn more](https://web.dev/structured-data).",
             "id": "structured-data",
             "score": null,
             "scoreDisplayMode": "manual",
@@ -2473,7 +2473,7 @@
             "title": "No element has a `[tabindex]` value greater than 0"
         },
         "tap-targets": {
-            "description": "Interactive elements like buttons and links should be large enough (48x48px), and have enough space around them, to be easy enough to tap without overlapping onto other elements. [Learn more](https://developers.google.com/web/fundamentals/accessibility/accessible-styles#multi-device_responsive_design).",
+            "description": "Interactive elements like buttons and links should be large enough (48x48px), and have enough space around them, to be easy enough to tap without overlapping onto other elements. [Learn more](https://web.dev/tap-targets).",
             "details": {
                 "headings": [
                     {
@@ -2529,7 +2529,7 @@
             "id": "td-headers-attr",
             "score": null,
             "scoreDisplayMode": "notApplicable",
-            "title": "Cells in a `<table>` element that use the `[headers]` attribute only refer to other cells of that same table."
+            "title": "Cells in a `<table>` element that use the `[headers]` attribute refer to table cells within the same table."
         },
         "th-has-data-cells": {
             "description": "Screen readers have features to make navigating tables easier. Ensuring table headers always refer to some set of cells may improve the experience for screen reader users. [Learn more](https://web.dev/th-has-data-cells/).",
@@ -2539,7 +2539,7 @@
             "title": "`<th>` elements and elements with `[role=\"columnheader\"/\"rowheader\"]` have data cells they describe."
         },
         "themed-omnibox": {
-            "description": "The browser address bar can be themed to match your site. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/address-bar).",
+            "description": "The browser address bar can be themed to match your site. [Learn more](https://web.dev/themed-omnibox).",
             "details": {
                 "items": [
                     {
@@ -2558,7 +2558,7 @@
             "id": "themed-omnibox",
             "score": 0.0,
             "scoreDisplayMode": "binary",
-            "title": "Does not set an address-bar theme color"
+            "title": "Does not set a theme color for the address bar."
         },
         "third-party-summary": {
             "description": "Third-party code can significantly impact load performance. Limit the number of redundant third-party providers and try to load third-party code after your page has primarily finished loading. [Learn more](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript/).",
@@ -2578,12 +2578,13 @@
                     {
                         "granularity": 1.0,
                         "itemType": "ms",
-                        "key": "mainThreadTime",
-                        "text": "Main Thread Time"
+                        "key": "blockingTime",
+                        "text": "Main-Thread Blocking Time"
                     }
                 ],
                 "items": [
                     {
+                        "blockingTime": 22.918000000000006,
                         "entity": {
                             "text": "Google CDN",
                             "type": "link",
@@ -2595,15 +2596,15 @@
                 ],
                 "summary": {
                     "wastedBytes": 30174.0,
-                    "wastedMs": 82.74100000000001
+                    "wastedMs": 22.918000000000006
                 },
                 "type": "table"
             },
-            "displayValue": "1 Third-Party Found",
+            "displayValue": "Third-party code blocked the main thread for 20\u00a0ms",
             "id": "third-party-summary",
-            "score": null,
-            "scoreDisplayMode": "informative",
-            "title": "Third-Party Usage"
+            "score": 1.0,
+            "scoreDisplayMode": "binary",
+            "title": "Third-Party usage"
         },
         "time-to-first-byte": {
             "description": "Time To First Byte identifies the time at which your server sends a response. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/ttfb).",
@@ -2785,7 +2786,7 @@
             "title": "User Timing marks and measures"
         },
         "uses-http2": {
-            "description": "HTTP/2 offers many benefits over HTTP/1.1, including binary headers, multiplexing, and server push. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/http2).",
+            "description": "HTTP/2 offers many benefits over HTTP/1.1, including binary headers, multiplexing, and server push. [Learn more](https://web.dev/uses-http2).",
             "details": {
                 "headings": [
                     {
@@ -2993,7 +2994,7 @@
             "warnings": []
         },
         "uses-passive-event-listeners": {
-            "description": "Consider marking your touch and wheel event listeners as `passive` to improve your page's scroll performance. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/passive-event-listeners).",
+            "description": "Consider marking your touch and wheel event listeners as `passive` to improve your page's scroll performance. [Learn more](https://web.dev/uses-passive-event-listeners).",
             "details": {
                 "headings": [
                     {
@@ -3029,7 +3030,7 @@
             "title": "Does not use passive listeners to improve scrolling performance"
         },
         "uses-rel-preconnect": {
-            "description": "Consider adding preconnect or dns-prefetch resource hints to establish early connections to important third-party origins. [Learn more](https://developers.google.com/web/fundamentals/performance/resource-prioritization#preconnect).",
+            "description": "Consider adding `preconnect` or `dns-prefetch` resource hints to establish early connections to important third-party origins. [Learn more](https://developers.google.com/web/fundamentals/performance/resource-prioritization#preconnect).",
             "details": {
                 "headings": [],
                 "items": [],
@@ -3183,7 +3184,7 @@
             "title": "`<video>` elements contain a `<track>` element with `[kind=\"description\"]`"
         },
         "viewport": {
-            "description": "Add a viewport meta tag to optimize your app for mobile screens. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/has-viewport-meta-tag).",
+            "description": "Add a `<meta name=\"viewport\">` tag to optimize your app for mobile screens. [Learn more](https://web.dev/viewport).",
             "id": "viewport",
             "score": 1.0,
             "scoreDisplayMode": "binary",
@@ -3198,14 +3199,14 @@
             "title": "Visual order on the page follows DOM order"
         },
         "without-javascript": {
-            "description": "Your app should display some content when JavaScript is disabled, even if it's just a warning to the user that JavaScript is required to use the app. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/no-js).",
+            "description": "Your app should display some content when JavaScript is disabled, even if it's just a warning to the user that JavaScript is required to use the app. [Learn more](https://web.dev/without-javascript).",
             "id": "without-javascript",
             "score": 1.0,
             "scoreDisplayMode": "binary",
             "title": "Contains some content when JavaScript is not available"
         },
         "works-offline": {
-            "description": "If you're building a Progressive Web App, consider using a service worker so that your app can work offline. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/http-200-when-offline).",
+            "description": "If you're building a Progressive Web App, consider using a service worker so that your app can work offline. [Learn more](https://web.dev/works-offline).",
             "id": "works-offline",
             "score": 0.0,
             "scoreDisplayMode": "binary",
@@ -3947,6 +3948,7 @@
         }
     },
     "configSettings": {
+        "channel": "cli",
         "emulatedFormFactor": "mobile",
         "locale": "en-US",
         "onlyCategories": null

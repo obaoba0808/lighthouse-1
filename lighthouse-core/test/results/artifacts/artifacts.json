@@ -13,7 +13,7 @@
     "output": [
       "html"
     ],
-    "maxWaitForFcp": 15000,
+    "maxWaitForFcp": 30000,
     "maxWaitForLoad": 45000,
     "throttlingMethod": "devtools",
     "throttling": {
@@ -31,27 +31,108 @@
     "channel": "cli",
     "budgets": [
       {
+        "path": "/",
         "resourceSizes": [
           {
-            "resourceType": "script",
-            "budget": 125
+            "resourceType": "total",
+            "budget": 100
           },
           {
-            "resourceType": "total",
-            "budget": 500
+            "resourceType": "stylesheet",
+            "budget": 5
+          },
+          {
+            "resourceType": "image",
+            "budget": 30
+          },
+          {
+            "resourceType": "media",
+            "budget": 0
+          },
+          {
+            "resourceType": "font",
+            "budget": 20
+          },
+          {
+            "resourceType": "script",
+            "budget": 30
+          },
+          {
+            "resourceType": "document",
+            "budget": 15
+          },
+          {
+            "resourceType": "other",
+            "budget": 5
+          },
+          {
+            "resourceType": "third-party",
+            "budget": 25
           }
         ],
         "resourceCounts": [
           {
-            "resourceType": "third-party",
+            "resourceType": "total",
+            "budget": 10
+          },
+          {
+            "resourceType": "stylesheet",
+            "budget": 2
+          },
+          {
+            "resourceType": "image",
+            "budget": 2
+          },
+          {
+            "resourceType": "media",
             "budget": 0
+          },
+          {
+            "resourceType": "font",
+            "budget": 1
+          },
+          {
+            "resourceType": "script",
+            "budget": 2
+          },
+          {
+            "resourceType": "document",
+            "budget": 1
+          },
+          {
+            "resourceType": "other",
+            "budget": 2
+          },
+          {
+            "resourceType": "third-party",
+            "budget": 1
           }
         ],
         "timings": [
           {
+            "metric": "first-contentful-paint",
+            "budget": 3000,
+            "tolerance": 100
+          },
+          {
+            "metric": "first-cpu-idle",
+            "budget": 2900,
+            "tolerance": 100
+          },
+          {
             "metric": "interactive",
-            "budget": 5000,
-            "tolerance": 1000
+            "budget": 2900,
+            "tolerance": 100
+          },
+          {
+            "metric": "first-meaningful-paint",
+            "budget": 2000,
+            "tolerance": 100
+          },
+          {
+            "metric": "max-potential-fid",
+            "budget": 100,
+            "tolerance": 100
           }
         ]
       }

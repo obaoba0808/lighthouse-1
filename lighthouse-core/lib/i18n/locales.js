@@ -10,7 +10,10 @@
  *
  * Google locale inheritance rules: https://goto.google.com/ccssm
  * CLDR language aliases: https://www.unicode.org/cldr/charts/latest/supplemental/aliases.html
+ * CLDR locale inheritance: https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/parentLocales.json
  */
+
+// TODO(paulirish): Centralize locale inheritance (combining this & i18n.lookupLocale()), adopt cldr parentLocale rules.
 
 /** @typedef {Record<string, {message: string}>} LhlMessages */
 

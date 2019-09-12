@@ -426,12 +426,15 @@ describe('GatherRunner', function() {
 
   it('returns a pageLoadError and no artifacts when there is a network error', async () => {
     const requestedUrl = 'https://example.com';
-    // This page load error should be overriden by NO_DOCUMENT_REQUEST (for being
-    // more specific) since requestedUrl does not match any network request in fixture.
+    // This page load error should be overriden by ERRORED_DOCUMENT_REQUEST (for being
+    // more specific) since the main document network request failed with a 500.
     const navigationError = new LHError(LHError.errors.NO_FCP);
     const driver = Object.assign({}, fakeDriver, {
       online: true,
       gotoURL: url => url.includes('blank') ? null : Promise.reject(navigationError),
+      endDevtoolsLog() {
+        return networkRecordsToDevtoolsLog([{url: requestedUrl, statusCode: 500}]);
+      },
     });
 
     const config = new Config({
@@ -450,7 +453,7 @@ describe('GatherRunner', function() {
     const artifacts = await GatherRunner.run(config.passes, options);
     expect(artifacts.LighthouseRunWarnings).toHaveLength(1);
     expect(artifacts.PageLoadError).toBeInstanceOf(Error);
-    expect(artifacts.PageLoadError.code).toEqual('NO_DOCUMENT_REQUEST');
+    expect(artifacts.PageLoadError.code).toEqual('ERRORED_DOCUMENT_REQUEST');
     expect(artifacts.TestGatherer).toBeUndefined();
   });
 
@@ -789,6 +792,7 @@ describe('GatherRunner', function() {
       // resolved URL here does not match any request in the network records, causing a runtime error.
       gotoURL: async _ => requestedUrl,
       online: true,
+      endDevtoolsLog: () => [],
     });
 
     const config = new Config({
@@ -871,14 +875,7 @@ describe('GatherRunner', function() {
       const url = 'http://the-page.com';
       const mainRecord = new NetworkRequest();
       mainRecord.url = url;
-      assert.ok(!GatherRunner.getNetworkError(url, [mainRecord]));
-    });
-
-    it('passes when the page is loaded, ignoring any fragment', () => {
-      const url = 'http://example.com/#/page/list';
-      const mainRecord = new NetworkRequest();
-      mainRecord.url = 'http://example.com';
-      assert.ok(!GatherRunner.getNetworkError(url, [mainRecord]));
+      assert.ok(!GatherRunner.getNetworkError(mainRecord));
     });
 
     it('fails when page fails to load', () => {
@@ -887,7 +884,7 @@ describe('GatherRunner', function() {
       mainRecord.url = url;
       mainRecord.failed = true;
       mainRecord.localizedFailDescription = 'foobar';
-      const error = GatherRunner.getNetworkError(url, [mainRecord]);
+      const error = GatherRunner.getNetworkError(mainRecord);
       assert.equal(error.message, 'FAILED_DOCUMENT_REQUEST');
       assert.equal(error.code, 'FAILED_DOCUMENT_REQUEST');
       expect(error.friendlyMessage)
@@ -895,9 +892,7 @@ describe('GatherRunner', function() {
     });
 
     it('fails when page times out', () => {
-      const url = 'http://the-page.com';
-      const records = [];
-      const error = GatherRunner.getNetworkError(url, records);
+      const error = GatherRunner.getNetworkError(undefined);
       assert.equal(error.message, 'NO_DOCUMENT_REQUEST');
       assert.equal(error.code, 'NO_DOCUMENT_REQUEST');
       expect(error.friendlyMessage).toBeDisplayString(/^Lighthouse was unable to reliably load/);
@@ -908,7 +903,7 @@ describe('GatherRunner', function() {
       const mainRecord = new NetworkRequest();
       mainRecord.url = url;
       mainRecord.statusCode = 404;
-      const error = GatherRunner.getNetworkError(url, [mainRecord]);
+      const error = GatherRunner.getNetworkError(mainRecord);
       assert.equal(error.message, 'ERRORED_DOCUMENT_REQUEST');
       assert.equal(error.code, 'ERRORED_DOCUMENT_REQUEST');
       expect(error.friendlyMessage)
@@ -920,7 +915,7 @@ describe('GatherRunner', function() {
       const mainRecord = new NetworkRequest();
       mainRecord.url = url;
       mainRecord.statusCode = 500;
-      const error = GatherRunner.getNetworkError(url, [mainRecord]);
+      const error = GatherRunner.getNetworkError(mainRecord);
       assert.equal(error.message, 'ERRORED_DOCUMENT_REQUEST');
       assert.equal(error.code, 'ERRORED_DOCUMENT_REQUEST');
       expect(error.friendlyMessage)
@@ -933,7 +928,7 @@ describe('GatherRunner', function() {
       mainRecord.url = url;
       mainRecord.failed = true;
       mainRecord.localizedFailDescription = 'net::ERR_NAME_NOT_RESOLVED';
-      const error = GatherRunner.getNetworkError(url, [mainRecord]);
+      const error = GatherRunner.getNetworkError(mainRecord);
       assert.equal(error.message, 'DNS_FAILURE');
       assert.equal(error.code, 'DNS_FAILURE');
       expect(error.friendlyMessage).toBeDisplayString(/^DNS servers could not resolve/);
@@ -941,11 +936,15 @@ describe('GatherRunner', function() {
   });
 
   describe('#getInterstitialError', () => {
+    it('passes when the page was not requested', () => {
+      expect(GatherRunner.getInterstitialError(undefined, [])).toBeUndefined();
+    });
+
     it('passes when the page is loaded', () => {
       const url = 'http://the-page.com';
       const mainRecord = new NetworkRequest();
       mainRecord.url = url;
-      expect(GatherRunner.getInterstitialError([mainRecord])).toBeUndefined();
+      expect(GatherRunner.getInterstitialError(mainRecord, [mainRecord])).toBeUndefined();
     });
 
     it('passes when page fails to load normally', () => {
@@ -954,7 +953,7 @@ describe('GatherRunner', function() {
       mainRecord.url = url;
       mainRecord.failed = true;
       mainRecord.localizedFailDescription = 'foobar';
-      expect(GatherRunner.getInterstitialError([mainRecord])).toBeUndefined();
+      expect(GatherRunner.getInterstitialError(mainRecord, [mainRecord])).toBeUndefined();
     });
 
     it('passes when page gets a generic interstitial but somehow also loads everything', () => {
@@ -966,7 +965,7 @@ describe('GatherRunner', function() {
       interstitialRecord.url = 'data:text/html;base64,abcdef';
       interstitialRecord.documentURL = 'chrome-error://chromewebdata/';
       const records = [mainRecord, interstitialRecord];
-      expect(GatherRunner.getInterstitialError(records)).toBeUndefined();
+      expect(GatherRunner.getInterstitialError(mainRecord, records)).toBeUndefined();
     });
 
     it('fails when page gets a generic interstitial', () => {
@@ -979,7 +978,7 @@ describe('GatherRunner', function() {
       interstitialRecord.url = 'data:text/html;base64,abcdef';
       interstitialRecord.documentURL = 'chrome-error://chromewebdata/';
       const records = [mainRecord, interstitialRecord];
-      const error = GatherRunner.getInterstitialError(records);
+      const error = GatherRunner.getInterstitialError(mainRecord, records);
       expect(error.message).toEqual('CHROME_INTERSTITIAL_ERROR');
       expect(error.code).toEqual('CHROME_INTERSTITIAL_ERROR');
       expect(error.friendlyMessage).toBeDisplayString(/^Chrome prevented/);
@@ -995,11 +994,28 @@ describe('GatherRunner', function() {
       interstitialRecord.url = 'data:text/html;base64,abcdef';
       interstitialRecord.documentURL = 'chrome-error://chromewebdata/';
       const records = [mainRecord, interstitialRecord];
-      const error = GatherRunner.getInterstitialError(records);
+      const error = GatherRunner.getInterstitialError(mainRecord, records);
       expect(error.message).toEqual('INSECURE_DOCUMENT_REQUEST');
       expect(error.code).toEqual('INSECURE_DOCUMENT_REQUEST');
       expect(error.friendlyMessage).toBeDisplayString(/valid security certificate/);
       expect(error.friendlyMessage).toBeDisplayString(/net::ERR_CERT_COMMON_NAME_INVALID/);
+    });
+
+    it('passes when page iframe gets a generic interstitial', () => {
+      const url = 'http://the-page.com';
+      const mainRecord = new NetworkRequest();
+      mainRecord.url = url;
+      mainRecord.failed = false;
+      const iframeRecord = new NetworkRequest();
+      iframeRecord.failed = true;
+      iframeRecord.url = 'https://the-ad.com';
+      iframeRecord.documentURL = 'https://the-ad.com';
+      const interstitialRecord = new NetworkRequest();
+      interstitialRecord.url = 'data:text/html;base64,abcdef';
+      interstitialRecord.documentURL = 'chrome-error://chromewebdata/';
+      const records = [mainRecord, iframeRecord, interstitialRecord];
+      const error = GatherRunner.getInterstitialError(mainRecord, records);
+      expect(error).toBeUndefined();
     });
   });
 
@@ -1015,6 +1031,16 @@ describe('GatherRunner', function() {
       const mainRecord = new NetworkRequest();
       const loadData = {networkRecords: [mainRecord]};
       mainRecord.url = passContext.url;
+      const error = GatherRunner.getPageLoadError(passContext, loadData, undefined);
+      expect(error).toBeUndefined();
+    });
+
+    it('passes when the page is loaded, ignoring any fragment', () => {
+      const url = 'http://example.com/#/page/list';
+      const mainRecord = new NetworkRequest();
+      const passContext = {url, driver: {online: true}};
+      const loadData = {networkRecords: [mainRecord]};
+      mainRecord.url = 'http://example.com';
       const error = GatherRunner.getPageLoadError(passContext, loadData, undefined);
       expect(error).toBeUndefined();
     });

@@ -62,6 +62,7 @@ async function browserifyFile(entryPath, distPath) {
   bundle.ignore('source-map')
     .ignore('debug/node')
     .ignore('intl')
+    .ignore('intl-pluralrules')
     .ignore('raven')
     .ignore('mkdirp')
     .ignore('rimraf')

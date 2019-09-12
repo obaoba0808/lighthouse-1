@@ -12,6 +12,8 @@ const http = require('http');
 const zlib = require('zlib');
 const path = require('path');
 const fs = require('fs');
+const glob = require('glob');
+const mime = require('mime-types');
 const parseQueryString = require('querystring').parse;
 const parseURL = require('url').parse;
 const URLSearchParams = require('url').URLSearchParams;
@@ -24,6 +26,21 @@ function requestHandler(request, response) {
   const filePath = requestUrl.pathname;
   const queryString = requestUrl.search && parseQueryString(requestUrl.search.slice(1));
   let absoluteFilePath = path.join(__dirname, filePath);
+
+  // Create an index page that lists the available test pages.
+  if (filePath === '/') {
+    const fixturePaths = glob.sync('**/*.html', {cwd: __dirname});
+    const html = `
+      <html>
+      <h1>Smoke test fixtures</h1>
+      ${fixturePaths.map(p => `<a href=${encodeURI(p)}>${escape(p)}</a>`).join('<br>')}
+    `;
+    response.writeHead(200, {
+      'Content-Security-Policy': `default-src 'none';`,
+    });
+    sendResponse(200, html);
+    return;
+  }
 
   if (filePath.startsWith('/dist/viewer')) {
     // Rewrite lighthouse-viewer paths to point to that location.
@@ -47,7 +64,7 @@ function requestHandler(request, response) {
 
   function fsExistsCallback(fileExists) {
     if (!fileExists) {
-      return sendResponse(404, `404 - File not found. ${absoluteFilePath}`);
+      return sendResponse(404, `404 - File not found. ${filePath}`);
     }
     fs.readFile(absoluteFilePath, 'binary', readFileCallback);
   }
@@ -63,23 +80,13 @@ function requestHandler(request, response) {
   function sendResponse(statusCode, data) {
     const headers = {'Access-Control-Allow-Origin': '*'};
 
-    if (filePath.endsWith('.js')) {
-      headers['Content-Type'] = 'text/javascript';
-    } else if (filePath.endsWith('.css')) {
-      headers['Content-Type'] = 'text/css';
-    } else if (filePath.endsWith('.svg')) {
-      headers['Content-Type'] = 'image/svg+xml';
-    } else if (filePath.endsWith('.png')) {
-      headers['Content-Type'] = 'image/png';
-    } else if (filePath.endsWith('.gif')) {
-      headers['Content-Type'] = 'image/gif';
-    } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
-      headers['Content-Type'] = 'image/jpeg';
-    } else if (filePath.endsWith('.webp')) {
-      headers['Content-Type'] = 'image/webp';
-    } else if (filePath.endsWith('.json')) {
-      headers['Content-Type'] = 'application/json';
-    }
+    const contentType = mime.lookup(filePath);
+    const charset = mime.lookup(contentType);
+    // `mime.contentType` appends the correct charset too.
+    // Note: it seems to miss just one case, svg. Doesn't matter much, we'll just allow
+    // svgs to fallback to binary encoding. `Content-Type: image/svg+xml` is sufficient for our use case.
+    // see https://github.com/jshttp/mime-types/issues/66
+    if (contentType) headers['Content-Type'] = mime.contentType(contentType);
 
     let delay = 0;
     let useGzip = false;
@@ -127,7 +134,8 @@ function requestHandler(request, response) {
       return setTimeout(finishResponse, delay, data);
     }
 
-    finishResponse(data);
+    const encoding = charset === 'UTF-8' ? 'utf-8' : 'binary';
+    finishResponse(data, encoding);
   }
 
   function sendRedirect(url) {
@@ -138,8 +146,8 @@ function requestHandler(request, response) {
     response.end();
   }
 
-  function finishResponse(data) {
-    response.write(data, 'binary');
+  function finishResponse(data, encoding) {
+    response.write(data, encoding);
     response.end();
   }
 }
@@ -150,12 +158,15 @@ const serverForOffline = http.createServer(requestHandler);
 serverForOnline.on('error', e => console.error(e.code, e));
 serverForOffline.on('error', e => console.error(e.code, e));
 
-
 // If called via `node static-server.js` then start listening, otherwise, just expose the servers
 if (require.main === module) {
   // Start listening
-  serverForOnline.listen(10200, 'localhost');
-  serverForOffline.listen(10503, 'localhost');
+  const onlinePort = 10200;
+  const offlinePort = 10503;
+  serverForOnline.listen(onlinePort, 'localhost');
+  serverForOffline.listen(offlinePort, 'localhost');
+  console.log(`online:  listening on http://localhost:${onlinePort}`);
+  console.log(`offline: listening on http://localhost:${offlinePort}`);
 } else {
   module.exports = {
     server: serverForOnline,

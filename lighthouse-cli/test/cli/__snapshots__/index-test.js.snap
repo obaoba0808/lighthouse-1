@@ -1248,7 +1248,7 @@ Object {
     "extraHeaders": null,
     "gatherMode": false,
     "locale": "en-US",
-    "maxWaitForFcp": 15000,
+    "maxWaitForFcp": 30000,
     "maxWaitForLoad": 45000,
     "onlyAudits": null,
     "onlyCategories": null,
@@ -1382,7 +1382,7 @@ Object {
     "extraHeaders": null,
     "gatherMode": false,
     "locale": "en-US",
-    "maxWaitForFcp": 15000,
+    "maxWaitForFcp": 30000,
     "maxWaitForLoad": 45000,
     "onlyAudits": Array [
       "metrics",

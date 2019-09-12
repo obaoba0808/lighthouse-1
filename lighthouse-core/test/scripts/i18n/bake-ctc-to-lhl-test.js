@@ -43,6 +43,25 @@ describe('Baking Placeholders', () => {
     });
   });
 
+  it('bakes a placeholder into the output string multiple times', () => {
+    const strings = {
+      hello: {
+        message: '$MARKDOWN_SNIPPET_0$ - $MARKDOWN_SNIPPET_0$',
+        placeholders: {
+          MARKDOWN_SNIPPET_0: {
+            content: '`World`',
+          },
+        },
+      },
+    };
+    const res = bakery.bakePlaceholders(strings);
+    expect(res).toStrictEqual({
+      hello: {
+        message: '`World` - `World`',
+      },
+    });
+  });
+
   it('throws when a placeholder cannot be found', () => {
     const strings = {
       hello: {

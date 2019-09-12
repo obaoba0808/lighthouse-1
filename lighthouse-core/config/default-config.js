@@ -94,6 +94,15 @@ const UIStrings = {
   seoCrawlingGroupTitle: 'Crawling and Indexing',
   /** Description of the navigation section within the Search Engine Optimization (SEO) category. Within this section are audits with descriptive titles that highlight ways to make a website accessible to search engine crawlers. */
   seoCrawlingGroupDescription: 'To appear in search results, crawlers need access to your app.',
+  /** Title of the Progressive Web Application (PWA) category of audits. This is displayed at the top of a list of audits focused on topics related to whether or not a site is a progressive web app, e.g. responds offline, uses a service worker, is on https, etc. Also used as a label of a score gauge. */
+  pwaCategoryTitle: 'Progressive Web App',
+  /** Description of the Progressive Web Application (PWA) category. This is displayed at the top of a list of audits focused on topics related to whether or not a site is a progressive web app, e.g. responds offline, uses a service worker, is on https, etc. No character length limits. 'Learn More' becomes link text to additional documentation. */
+  pwaCategoryDescription: 'These checks validate the aspects of a Progressive Web App. ' +
+  '[Learn more](https://developers.google.com/web/progressive-web-apps/checklist).',
+  /** Description of the Progressive Web Application (PWA) manual checks category, containing a list of additional validators must be run by hand in order to check all PWA best practices. This is displayed at the top of a list of manually run audits focused on topics related to whether or not a site is a progressive web app, e.g. responds offline, uses a service worker, is on https, etc.. No character length limits. */
+  pwaCategoryManualDescription: 'These checks are required by the baseline ' +
+  '[PWA Checklist](https://developers.google.com/web/progressive-web-apps/checklist) but are ' +
+  'not automatically checked by Lighthouse. They do not affect your score but it\'s important that you verify them manually.',
   /** Title of the Best Practices category of audits. This is displayed at the top of a list of audits focused on topics related to following web development best practices and accepted guidelines. Also used as a label of a score gauge; try to limit to 20 characters. */
   bestPracticesCategoryTitle: 'Best Practices',
   /** Title of the Fast and Reliable section of the web app category. Within this section are audits that check if the web site loaded quickly and can reliably load even if the internet connection is very slow or goes offline. */
@@ -507,11 +516,9 @@ const defaultConfig = {
       ],
     },
     'pwa': {
-      title: 'Progressive Web App',
-      description: 'These checks validate the aspects of a Progressive Web App. [Learn more](https://developers.google.com/web/progressive-web-apps/checklist).',
-      manualDescription: 'These checks are required by the baseline ' +
-          '[PWA Checklist](https://developers.google.com/web/progressive-web-apps/checklist) but are ' +
-          'not automatically checked by Lighthouse. They do not affect your score but it\'s important that you verify them manually.',
+      title: str_(UIStrings.pwaCategoryTitle),
+      description: str_(UIStrings.pwaCategoryDescription),
+      manualDescription: str_(UIStrings.pwaCategoryManualDescription),
       auditRefs: [
         // Fast and Reliable
         {id: 'load-fast-enough-for-pwa', weight: 7, group: 'pwa-fast-reliable'},

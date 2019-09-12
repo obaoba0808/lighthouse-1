@@ -418,10 +418,18 @@ describe('Convert Message to Placeholder', () => {
     });
   });
 
-  it('catches common link markdown mistakes', () => {
-    const message = 'Hello [World] (https://google.com/).';
-    expect(() => collect.convertMessageToCtc(message))
-      .toThrow(/Bad Link syntax in message "Hello \[World\] \(https:\/\/google\.com\/\)\."/);
+  describe('catches common link markdown mistakes', () => {
+    it('throws on spaces between link text and href blocks', () => {
+      const message = 'Hello [World] (https://google.com/).';
+      expect(() => collect.convertMessageToCtc(message))
+        .toThrow(/Bad Link spacing in message "Hello \[World\] \(https:\/\/google\.com\/\)\."/);
+    });
+
+    it('throws on empty link text', () => {
+      const message = '[](https://example.com/).';
+      expect(() => collect.convertMessageToCtc(message))
+        .toThrow(/markdown link text missing in message "\[\]\(https:\/\/example\.com\/\)\."/);
+    });
   });
 
   it('converts custom-formatted ICU to placholders', () => {
