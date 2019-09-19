@@ -11,7 +11,6 @@
 
 const fs = require('fs');
 const {execSync} = require('child_process');
-const rimraf = require('rimraf');
 const yargs = require('yargs');
 
 const LH_ROOT = `${__dirname}/../..`;
@@ -48,7 +47,7 @@ const outputDir = `${ROOT_OUTPUT_DIR}/${argv.name}`;
 
 if (argv.collect) {
   if (!fs.existsSync(ROOT_OUTPUT_DIR)) fs.mkdirSync(ROOT_OUTPUT_DIR);
-  if (fs.existsSync(outputDir)) rimraf.sync(outputDir);
+  if (fs.existsSync(outputDir)) throw new Error(`folder already exists: ${outputDir}`);
   fs.mkdirSync(outputDir);
 
   for (const url of argv.urls) {
