@@ -101,6 +101,8 @@ Confirm Lightrider integration will work:
 ```sh
 # Run the internal `update_lighthouse_assets.sh` script.
 
+# Update that silly string that sets the version number for metrics.
+
 # Test things out locally, if happy, deploy to canary and see how the graphs react.
 
 # Do the stuff in "Test LR changes in Canary".
