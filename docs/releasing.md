@@ -21,7 +21,9 @@ Italicized dates are the day before the expected Chromium branch point.
 
 The planned ship dates are added to the internal Lighthouse calendar.
 
-If a release is necessary outside these scheduled dates, we may choose to skip the next scheduled release. 
+If a release is necessary outside these scheduled dates, we may choose to skip the next scheduled release.
+
+In general, the above release dates are when new versions will be available in npm. About a week later, it will be reflected in LR / PSI. Some 10 weeks later, it will be available in Chrome.
 
 ### Release manager
 
@@ -90,6 +92,9 @@ git diff
 
 # For bonus points, add some tests covering new features. Either a new test, or an extra
 # assertion in an existing test.
+
+git cl upload --bypass-hooks
+# Go to Gerrit, run CQ dry run, ensure the tests all pass.
 ```
 
 Confirm Lightrider integration will work:
@@ -152,4 +157,17 @@ echo "Upload the package zip to CWS dev dashboard..."
 
 # * Tell the world!!! *
 echo "Complete the _Release publicity_ tasks documented above"
+
+# Roll the tagged commit to Chromium and update the CL you made. Do not land, see next section.
+# Roll the tagged commit to LR and land the CL.
 ```
+
+### Chromium CL
+
+If this is a branching week, wait until _after_ the branch point email, then land the CL.
+
+Otherwise, you can land it immediately.
+
+### The following Monday
+
+Evaluate LR staging, if all looks good, promote to production!
