@@ -105,7 +105,8 @@ Confirm Lightrider integration will work:
 # Do the stuff in "Test LR changes in Canary".
 # https://g3doc.corp.google.com/chrome/headless/lightrider/README.md?cl=head#test-lr-changes-in-canary
 
-# Verify that the Audits panel still works. Consider the new features that have been added.
+# Verify that Lightrider works properly, and is generating reports fully. Consider the new features that have been added.
+# Note: if the changes include proto changes make sure that the API has those new fields.
 # If anything is wrong, stop releasing, investigate, and prioritize landing the PR.
 
 # For bonus points, add some tests covering new features. Either a new test, or an extra
