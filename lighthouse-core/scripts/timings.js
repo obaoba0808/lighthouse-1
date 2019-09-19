@@ -118,7 +118,7 @@ if (argv.summarize) {
     const max = Math.max(...measures);
     const stdev = Math.sqrt(average(measures.map(measure => (measure - mean) ** 2)));
     return {
-      measureName,
+      measure: measureName,
       url,
       n: measures.length,
       mean: round(mean),
@@ -127,7 +127,7 @@ if (argv.summarize) {
       max,
     };
   }).sort((a, b) => {
-    return a.measureName.localeCompare(b.measureName);
+    return a.measure.localeCompare(b.measure);
   });
 
   if (argv.output === 'table') {
