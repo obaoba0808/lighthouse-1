@@ -8,7 +8,6 @@ We aim to release every 3 weeks. Our schedule is set as follows: One day before 
 
 Example, the next fews releases (as of this writing) are:
 
-* Sep 24 2019
 * _Oct 15 2019_
 * Nov 5 2019
 * _Nov 26 2019_
@@ -18,7 +17,7 @@ Example, the next fews releases (as of this writing) are:
 * _Feb 18 2020_
 * Mar 10 2020
 
-Underlined dates are the day before the expected Chromium branch point.
+Italicized dates are the day before the expected Chromium branch point.
 
 The planned ship dates are added to the internal Lighthouse calendar.
 
