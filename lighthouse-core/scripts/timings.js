@@ -6,7 +6,7 @@
 'use strict';
 
 // Example:
-//     node lighthouse-core/scripts/timings.js --name my-collection --collect -n 3 --lh-flags '--only-audits=unminified-javascript' --urls https://www.example.com https://www.nyt.com
+//     node lighthouse-core/scripts/timings.js --name my-collection --collect -n 3 --lh-flags='--only-audits=unminified-javascript' --urls https://www.example.com https://www.nyt.com
 //     node lighthouse-core/scripts/timings.js --name my-collection --summarize --measure-filter 'loadPage|connect'
 
 const fs = require('fs');
@@ -37,7 +37,7 @@ const argv = yargs
   .default('lh-flags', '')
   // Why is the printing for examples so awful?
   // eslint-disable max-len
-  // .example("node lighthouse-core/scripts/timings.js --name my-collection --collect -n 3 --lh-flags '--only-audits=unminified-javascript' --urls https://www.example.com", 'Collect')
+  // .example("node lighthouse-core/scripts/timings.js --name my-collection --collect -n 3 --lh-flags='--only-audits=unminified-javascript' --urls https://www.example.com", 'Collect')
   // .example("node lighthouse-core/scripts/timings.js --name my-collection --summarize --measure-filter 'loadPage|connect'", 'Summarize')
   // eslint-enable max-len
   .wrap(yargs.terminalWidth())
@@ -59,7 +59,7 @@ if (argv.collect) {
         url,
         `--output-path=${outputDir}/lhr-${url.replace(/[^a-zA-Z0-9]/g, '_')}-${i}.json`,
         '--output=json',
-        argv['lh-flags'],
+        argv.lhFlags,
       ].join(' ');
       execSync(cmd, {stdio: 'ignore'});
     }
@@ -85,7 +85,7 @@ if (argv.summarize) {
   /** @type {Map<string, number[]>} */
   const measuresMap = new Map();
   /** @type {RegExp|null} */
-  const measureFilter = argv['measure-filter'] ? new RegExp(argv['measure-filter'], 'i') : null;
+  const measureFilter = argv.measureFilter ? new RegExp(argv.measureFilter, 'i') : null;
 
   for (const lhrPath of fs.readdirSync(outputDir)) {
     const lhrJson = fs.readFileSync(`${outputDir}/${lhrPath}`, 'utf-8');
