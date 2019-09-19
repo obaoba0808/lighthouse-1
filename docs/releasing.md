@@ -6,16 +6,13 @@
 
 We aim to release every 3 weeks. Our schedule is set as follows: One day before the [expected Chromium branch point](https://www.chromium.org/developers/calendar) (which is every six weeks) and again exactly 3 weeks after that day.
 
-Example, the next fews releases (as of this writing) are:
+For example, following this schedule, we will attempt a release on these dates:
 
 * _Oct 15 2019_
 * Nov 5 2019
 * _Nov 26 2019_
-* Dec 17 2020
-* _Jan 7 2020_
-* Jan 28 2020
-* _Feb 18 2020_
-* Mar 10 2020
+* Dec 17 2019
+* ...
 
 Italicized dates are the day before the expected Chromium branch point.
 
