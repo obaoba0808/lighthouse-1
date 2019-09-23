@@ -35,11 +35,6 @@ const argv = yargs
   .array('urls')
   .string('lh-flags')
   .default('lh-flags', '')
-  // Why is the printing for examples so awful?
-  // eslint-disable max-len
-  // .example('node lighthouse-core/scripts/timings.js --name my-collection --collect -n 3 --lh-flags=\'--only-audits=unminified-javascript\' --urls https://www.example.com', 'Collect')
-  // .example('node lighthouse-core/scripts/timings.js --name my-collection --summarize --measure-filter \'loadPage|connect\'', 'Summarize')
-  // eslint-enable max-len
   .wrap(yargs.terminalWidth())
 .argv;
 
@@ -140,7 +135,7 @@ function summarize() {
     console.log(JSON.stringify(results, null, 2));
   }
 }
-
+comp
 function main() {
   if (argv.collect) collect();
   if (argv.summarize) summarize();
