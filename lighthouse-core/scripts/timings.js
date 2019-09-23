@@ -41,11 +41,26 @@ const argv = yargs
   // .example('node lighthouse-core/scripts/timings.js --name my-collection --summarize --measure-filter \'loadPage|connect\'', 'Summarize')
   // eslint-enable max-len
   .wrap(yargs.terminalWidth())
-  .argv;
+.argv;
 
 const outputDir = `${ROOT_OUTPUT_DIR}/${argv.name}`;
 
-if (argv.collect) {
+/**
+ * @param {number[]} values
+ */
+function average(values) {
+  return values.reduce((sum, value) => sum + value) / values.length;
+}
+
+/**
+ * Round to the tenth.
+ * @param {number} value
+ */
+function round(value) {
+  return Math.round(value * 10) / 10;
+}
+
+function collect() {
   if (!fs.existsSync(ROOT_OUTPUT_DIR)) fs.mkdirSync(ROOT_OUTPUT_DIR);
   if (fs.existsSync(outputDir)) throw new Error(`folder already exists: ${outputDir}`);
   fs.mkdirSync(outputDir);
@@ -65,51 +80,36 @@ if (argv.collect) {
   }
 }
 
-/**
- * @param {number[]} values
- */
-function average(values) {
-  return values.reduce((sum, value) => sum + value) / values.length;
-}
-
-/**
- * Round to the tenth.
- * @param {number} value
- */
-function round(value) {
-  return Math.round(value * 10) / 10;
-}
-
-if (argv.summarize) {
+function summarize() {
   /** @type {Map<string, number[]>} */
   const measuresMap = new Map();
   /** @type {RegExp|null} */
   const measureFilter = argv.measureFilter ? new RegExp(argv.measureFilter, 'i') : null;
-
+  
   for (const lhrPath of fs.readdirSync(outputDir)) {
     const lhrJson = fs.readFileSync(`${outputDir}/${lhrPath}`, 'utf-8');
     /** @type {LH.Result} */
     const lhr = JSON.parse(lhrJson);
-
+  
     for (const measureName of lhr.timing.entries.map(entry => entry.name)) {
       if (measureFilter && !measureFilter.test(measureName)) {
         continue;
       }
-
+  
       const measuresKey = `${lhr.requestedUrl}@@@${measureName}`;
       let measures = measuresMap.get(measuresKey);
       if (!measures) {
         measures = [];
         measuresMap.set(measuresKey, measures);
       }
-
+  
       const measureEntry = lhr.timing.entries.find(measure => measure.name === measureName);
       if (!measureEntry) throw new Error('missing measure');
-
+  
       measures.push(measureEntry.duration);
     }
   }
-
+  
   const results = [...measuresMap.entries()].map(([measuresKey, measures]) => {
     const [url, measureName] = measuresKey.split('@@@');
     const mean = average(measures);
@@ -122,13 +122,13 @@ if (argv.summarize) {
       n: measures.length,
       mean: round(mean),
       stdev: round(stdev),
-      min,
-      max,
+      min: round(min),
+      max: round(max),
     };
   }).sort((a, b) => {
     return a.measure.localeCompare(b.measure);
   });
-
+  
   if (argv.output === 'table') {
     // eslint-disable-next-line no-console
     console.table(results);
@@ -137,3 +137,10 @@ if (argv.summarize) {
     console.log(JSON.stringify(results, null, 2));
   }
 }
+
+function main() {
+  if (argv.collect) collect();
+  if (argv.summarize) summarize();
+}
+
+main();
