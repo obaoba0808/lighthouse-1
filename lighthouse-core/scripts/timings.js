@@ -80,31 +80,31 @@ function summarize() {
   const measuresMap = new Map();
   /** @type {RegExp|null} */
   const measureFilter = argv.measureFilter ? new RegExp(argv.measureFilter, 'i') : null;
-  
+
   for (const lhrPath of fs.readdirSync(outputDir)) {
     const lhrJson = fs.readFileSync(`${outputDir}/${lhrPath}`, 'utf-8');
     /** @type {LH.Result} */
     const lhr = JSON.parse(lhrJson);
-  
+
     for (const measureName of lhr.timing.entries.map(entry => entry.name)) {
       if (measureFilter && !measureFilter.test(measureName)) {
         continue;
       }
-  
+
       const measuresKey = `${lhr.requestedUrl}@@@${measureName}`;
       let measures = measuresMap.get(measuresKey);
       if (!measures) {
         measures = [];
         measuresMap.set(measuresKey, measures);
       }
-  
+
       const measureEntry = lhr.timing.entries.find(measure => measure.name === measureName);
       if (!measureEntry) throw new Error('missing measure');
-  
+
       measures.push(measureEntry.duration);
     }
   }
-  
+
   const results = [...measuresMap.entries()].map(([measuresKey, measures]) => {
     const [url, measureName] = measuresKey.split('@@@');
     const mean = average(measures);
@@ -126,7 +126,7 @@ function summarize() {
     if (measureComp !== 0) return measureComp;
     return a.url.localeCompare(b.url);
   });
-  
+
   if (argv.output === 'table') {
     // eslint-disable-next-line no-console
     console.table(results);
@@ -135,7 +135,7 @@ function summarize() {
     console.log(JSON.stringify(results, null, 2));
   }
 }
-comp
+
 function main() {
   if (argv.collect) collect();
   if (argv.summarize) summarize();
