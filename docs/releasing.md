@@ -20,7 +20,7 @@ The planned ship dates are added to the internal Lighthouse calendar.
 
 If a release is necessary outside these scheduled dates, we may choose to skip the next scheduled release.
 
-In general, the above release dates are when new versions will be available in npm. About a week later, it will be reflected in LR / PSI. Some 10 weeks later, it will be available in Chrome.
+In general, the above release dates are when new versions will be available in npm. About a week later, it will be reflected in LR / PSI. Some 10 weeks later, it will be available in Stable Chrome.
 
 ### Release manager
 
