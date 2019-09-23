@@ -100,7 +100,7 @@ Confirm Lightrider integration will work:
 
 # Update that silly string that sets the version number for metrics.
 
-# Test things out locally, if happy, deploy to canary and see how the graphs react.
+# Test things out locally, if happy, deploy to canary and see how the graphs react. 20 minutes should be enough time.
 
 # Do the stuff in "Test LR changes in Canary".
 # https://g3doc.corp.google.com/chrome/headless/lightrider/README.md?cl=head#test-lr-changes-in-canary
@@ -126,7 +126,7 @@ bash ./lighthouse-core/scripts/release/prepare-commit.sh x.x.x
 # Open the PR and await merge...
 echo "It's been merged! 🎉"
 
-# Get that new changelog commit + one last test.
+# One last test (this script uses origin/master, so we also get the commit with the new changelog - that commit should be HEAD).
 bash ./lighthouse-core/scripts/release/test.sh
 # Package everything for publishing
 bash ./lighthouse-core/scripts/release/prepare-package.sh
