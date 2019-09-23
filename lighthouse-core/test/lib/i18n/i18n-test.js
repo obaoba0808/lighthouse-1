@@ -132,6 +132,10 @@ describe('i18n', () => {
   });
 
   describe('#registerLocaleData', () => {
+    // Store original locale data so we can restore at the end
+    const moduleLocales = require('../../../lib/i18n/locales.js');
+    const clonedLocales = JSON.parse(JSON.stringify(moduleLocales));
+
     it('installs new locale strings', () => {
       const localeData = {
         'lighthouse-core/test/lib/i18n/i18n-test.js | testString': {
@@ -160,18 +164,23 @@ describe('i18n', () => {
       // Now we declare and register the new string...
       const localeData = {
         'lighthouse-core/audits/is-on-https.js | title': {
-          'message': 'es-419 uses https!',
+          'message': 'new string for es-419 uses https!',
         },
       };
       i18n.registerLocaleData('es-419', localeData);
 
       // And confirm that's what is returned
       const newTitle = i18n.getFormatted(str_(UIStrings.title), 'es-419');
-      expect(newTitle).toEqual('es-419 uses https!');
+      expect(newTitle).toEqual('new string for es-419 uses https!');
 
       // Meanwhile another string that wasn't set in registerLocaleData just falls back to english
       const newFailureTitle = i18n.getFormatted(str_(UIStrings.failureTitle), 'es-419');
       expect(newFailureTitle).toEqual('Does not use HTTPS');
+
+      // Restore overwritten strings to avoid messing with other tests
+      moduleLocales['es-419'] = clonedLocales['es-419'];
+      const title = i18n.getFormatted(str_(UIStrings.title), 'es-419');
+      expect(title).toEqual('Usa HTTPS');
     });
   });
 

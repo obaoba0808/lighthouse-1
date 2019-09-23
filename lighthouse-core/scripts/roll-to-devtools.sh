@@ -56,11 +56,6 @@ mkdir -p "$fe_locales_dir"
 find $lh_locales_dir -name '*.json' ! -name '*.ctc.json'  -exec cp {} "$fe_locales_dir" \;
 echo -e "$check Locale JSON files copied."
 
-# update expected version string in tests
-VERSION=$(node -e "console.log(require('./package.json').version)")
-sed -i '' -e "s/Version:.*/Version: $VERSION/g" "$tests_dir"/*-expected.txt
-echo -e "$check Updated Version string in tests."
-
 echo ""
 echo "Done. To rebase the test expectations, run: "
 echo "    yarn --cwd ~/chromium/src/third_party/blink/renderer/devtools test 'http/tests/devtools/audits/*.js' --reset-results"

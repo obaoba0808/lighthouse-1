@@ -3983,7 +3983,7 @@
             "warningHeader": "Warnings: "
         }
     },
-    "lighthouseVersion": "5.3.0",
+    "lighthouseVersion": "5.4.0",
     "requestedUrl": "http://localhost:10200/dobetterweb/dbw_tester.html",
     "runWarnings": [],
     "stackPacks": [
