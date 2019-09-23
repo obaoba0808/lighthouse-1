@@ -96,9 +96,7 @@ git cl upload --bypass-hooks
 
 Confirm Lightrider integration will work:
 ```sh
-# Run the internal `update_lighthouse_assets.sh` script.
-
-# Update that silly string that sets the version number for metrics.
+# See the internal README for updating Lighthouse.
 
 # Test things out locally, if happy, deploy to canary and see how the graphs react. 20 minutes should be enough time.
 
