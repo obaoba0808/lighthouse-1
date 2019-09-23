@@ -37,8 +37,8 @@ const argv = yargs
   .default('lh-flags', '')
   // Why is the printing for examples so awful?
   // eslint-disable max-len
-  // .example("node lighthouse-core/scripts/timings.js --name my-collection --collect -n 3 --lh-flags='--only-audits=unminified-javascript' --urls https://www.example.com", 'Collect')
-  // .example("node lighthouse-core/scripts/timings.js --name my-collection --summarize --measure-filter 'loadPage|connect'", 'Summarize')
+  .example("node lighthouse-core/scripts/timings.js --name my-collection --collect -n 3 --lh-flags='--only-audits=unminified-javascript' --urls https://www.example.com", 'Collect')
+  .example("node lighthouse-core/scripts/timings.js --name my-collection --summarize --measure-filter 'loadPage|connect'", 'Summarize')
   // eslint-enable max-len
   .wrap(yargs.terminalWidth())
   .argv;
@@ -52,7 +52,6 @@ if (argv.collect) {
 
   for (const url of argv.urls) {
     for (let i = 0; i < argv.n; i++) {
-      // const cmd = `node ${LH_ROOT}/lighthouse-cli ${url} --output-path=${outputDir}/lhr${i}.json --output json ${argv['lh-flags']}`;
       const cmd = [
         'node',
         `${LH_ROOT}/lighthouse-cli`,
