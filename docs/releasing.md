@@ -53,9 +53,7 @@ Note: You'll wanna be on a Linux machine, since the Lightrider step will require
 ### On the scheduled release date
 
 Before starting, you should announce to the LH eng channel that you are releasing,
-and that no new PRs should be merged until you are done. If you have to go through all these steps
-again to assert that release-blocking fixes work, other PRs may be merged too, but that should
-be coordinate with you.
+and that no new PRs should be merged until you are done.
 
 ```sh
 # Run the tests.
