@@ -126,7 +126,10 @@ function summarize() {
       max: round(max),
     };
   }).sort((a, b) => {
-    return a.measure.localeCompare(b.measure);
+    // sort by {measure, url}
+    const measureComp = a.measure.localeCompare(b.measure);
+    if (measureComp !== 0) return measureComp;
+    return a.url.localeCompare(b.url);
   });
   
   if (argv.output === 'table') {
