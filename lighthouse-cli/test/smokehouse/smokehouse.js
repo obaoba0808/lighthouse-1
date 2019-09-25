@@ -124,11 +124,11 @@ function runLighthouse(url, configPath, isDebug) {
   const timestampLength = new Date().toUTCString().length;
   const stderr = runResults.stderr
     .split('\n')
+    .filter(line => /:(warn|error)/.test(line))
     .map(line => {
       if (/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/.test(line)) return line.substr(timestampLength + 1);
       return line;
-    })
-    .filter(line => /:(warn|error)/.test(line));
+    });
 
   return {
     lhr,
