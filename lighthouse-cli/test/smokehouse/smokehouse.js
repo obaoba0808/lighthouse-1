@@ -128,11 +128,7 @@ function runLighthouse(url, configPath, isDebug) {
       if (/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/.test(line)) return line.substr(timestampLength + 1);
       return line;
     })
-    .filter(line => !/Artifacts saved to disk in folder/.test(line))
-    .filter(line => !/json output written to/.test(line))
-    .filter(line => !/Killing Chrome instance/.test(line))
-    .filter(line => !/Timed out waiting for page load. Checking if page is hung/.test(line))
-    .filter(line => !/Waiting for browser/.test(line));
+    .filter(line => /:(warn|error)/.test(line));
 
   return {
     lhr,
@@ -149,7 +145,7 @@ function runLighthouse(url, configPath, isDebug) {
 function getSnapshotPath(expected) {
   const url = new URL(expected.lhr.requestedUrl);
   const searchHash = url.search &&
-    crypto.createHash('md5').update('url.search').digest("hex").substr(0, 6);
+    crypto.createHash('md5').update('url.search').digest('hex').substr(0, 6);
   url.search = '';
   const escapedUrl = url.href.replace(/[^a-zA-Z0-9]/g, '_');
   const filename = `${escapedUrl}_${searchHash ? searchHash : ''}.json`;
