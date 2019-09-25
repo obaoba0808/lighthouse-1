@@ -130,8 +130,8 @@ function runLighthouse(url, configPath, isDebug) {
     })
     .filter(line => !/Artifacts saved to disk in folder/.test(line))
     .filter(line => !/json output written to/.test(line))
-    .filter(line => !/Timed out waiting for page load. Checking if page is hung/.test(line))
     .filter(line => !/Killing Chrome instance/.test(line))
+    .filter(line => !/Timed out waiting for page load. Checking if page is hung/.test(line))
     .filter(line => !/Waiting for browser/.test(line));
 
   return {
