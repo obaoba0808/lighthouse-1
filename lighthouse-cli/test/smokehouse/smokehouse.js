@@ -10,6 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const spawnSync = require('child_process').spawnSync;
 const yargs = require('yargs');
 const log = require('lighthouse-logger');
@@ -61,7 +62,6 @@ function runLighthouse(url, configPath, isDebug) {
     '--output=json',
     `-G=${artifactsDirectory}`,
     `-A=${artifactsDirectory}`,
-    '--quiet',
     '--port=0',
   ];
 
@@ -83,7 +83,7 @@ function runLighthouse(url, configPath, isDebug) {
 
     runCount++;
     console.log(`${log.dim}$ ${command} ${args.join(' ')} ${log.reset}`);
-    runResults = spawnSync(command, args, {encoding: 'utf8', stdio: ['pipe', 'pipe', 'inherit']});
+    runResults = spawnSync(command, args, {encoding: 'utf8'});
   } while (runResults.status === PROTOCOL_TIMEOUT_EXIT_CODE && runCount <= RETRIES);
 
   if (isDebug) {
@@ -120,10 +120,40 @@ function runLighthouse(url, configPath, isDebug) {
     process.exit(1);
   }
 
+  // Normalize the output.
+  const timestampLength = new Date().toUTCString().length;
+  const stderr = runResults.stderr
+    .split('\n')
+    .map(line => {
+      if (/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/.test(line)) return line.substr(timestampLength + 1);
+      return line;
+    })
+    .filter(line => !/Artifacts saved to disk in folder/.test(line))
+    .filter(line => !/json output written to/.test(line))
+    .filter(line => !/Timed out waiting for page load. Checking if page is hung/.test(line))
+    .filter(line => !/Killing Chrome instance/.test(line))
+    .filter(line => !/Waiting for browser/.test(line));
+
   return {
     lhr,
     artifacts,
+    stderr,
   };
+}
+
+/**
+ * Create unique filename based on expectation.
+ * URL is normalized and search params are hashed to prevent bad / long file names.
+ * @param {Smokehouse.ExpectedRunnerResult} expected
+ */
+function getSnapshotPath(expected) {
+  const url = new URL(expected.lhr.requestedUrl);
+  const searchHash = url.search &&
+    crypto.createHash('md5').update('url.search').digest("hex").substr(0, 6);
+  url.search = '';
+  const escapedUrl = url.href.replace(/[^a-zA-Z0-9]/g, '_');
+  const filename = `${escapedUrl}_${searchHash ? searchHash : ''}.json`;
+  return `${__dirname}/snapshots/${filename}`;
 }
 
 const cli = yargs
@@ -131,8 +161,10 @@ const cli = yargs
   .describe({
     'config-path': 'The path to the config JSON file',
     'expectations-path': 'The path to the expected audit results file',
+    'u': 'Update stderr snapshots',
     'debug': 'Save the artifacts along with the output',
   })
+  .default('u', false)
   .require('config-path', true)
   .require('expectations-path', true)
   .argv;
@@ -140,6 +172,7 @@ const cli = yargs
 const configPath = resolveLocalOrCwd(cli['config-path']);
 /** @type {Smokehouse.ExpectedRunnerResult[]} */
 const expectations = require(resolveLocalOrCwd(cli['expectations-path']));
+const updateSnaphots = Boolean(cli['u']);
 
 // Loop sequentially over expectations, comparing against Lighthouse run, and
 // reporting result.
@@ -148,6 +181,29 @@ let failingCount = 0;
 expectations.forEach(expected => {
   console.log(`Doing a run of '${expected.lhr.requestedUrl}'...`);
   const results = runLighthouse(expected.lhr.requestedUrl, configPath, cli.debug);
+
+  // Set the saved snapshot to `expected.stderr`.
+  if (expected.stderr) throw new Error('Do not set `stderr` directly.');
+  const snapshotPath = getSnapshotPath(expected);
+  if (fs.existsSync(snapshotPath)) {
+    if (updateSnaphots) {
+      console.log(`Updated snapshot: ${snapshotPath}`);
+      fs.writeFileSync(snapshotPath, JSON.stringify(results.stderr, null, 2));
+      expected.stderr = results.stderr;
+    } else {
+      // This is the normal case.
+      const expectedStderrJson = fs.readFileSync(snapshotPath, 'utf-8');
+      expected.stderr = JSON.parse(expectedStderrJson);
+    }
+  } else {
+    if (updateSnaphots) {
+      console.log(`Created snapshot: ${snapshotPath}`);
+      fs.writeFileSync(snapshotPath, JSON.stringify(results.stderr, null, 2));
+      expected.stderr = results.stderr;
+    } else {
+      console.log(`Missing snapshot (run with -u to create): ${snapshotPath}`);
+    }
+  }
 
   console.log(`Asserting expected results match those found. (${expected.lhr.requestedUrl})`);
   const collated = collateResults(results, expected);

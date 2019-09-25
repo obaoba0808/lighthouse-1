@@ -47,6 +47,7 @@ async function runSmokehouse(smokes) {
       'node lighthouse-cli/test/smokehouse/smokehouse.js',
       `--config-path=${config}`,
       `--expectations-path=${expectations}`,
+      process.argv.includes('-u') ? '-u' : '',
     ].join(' ');
 
     // The promise ensures we output immediately, even if the process errors
@@ -106,7 +107,7 @@ async function cli() {
   server.listen(10200, 'localhost');
   serverForOffline.listen(10503, 'localhost');
 
-  const argv = process.argv.slice(2);
+  const argv = process.argv.slice(2).filter(arg => !arg.startsWith('-'));
   const batches = getSmoketestBatches(argv);
 
   const smokeDefns = new Map();

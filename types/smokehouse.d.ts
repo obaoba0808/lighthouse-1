@@ -22,8 +22,9 @@
   export type ExpectedLHR = Pick<LH.Result, 'audits' | 'finalUrl' | 'requestedUrl' | 'runtimeError'>
 
   export type ExpectedRunnerResult = {
-    lhr: ExpectedLHR,
-    artifacts?: Partial<LH.Artifacts>
+    lhr: ExpectedLHR;
+    artifacts?: Partial<LH.Artifacts>;
+    stderr?: string[];
   }
 
   export interface TestDfn {

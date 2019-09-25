@@ -178,6 +178,7 @@ function collateResults(actual, expected) {
       expected: expected.lhr.finalUrl,
       equal: actual.lhr.finalUrl === expected.lhr.finalUrl,
     },
+    makeComparison('stderr', actual.stderr, expected.stderr),
     runtimeErrorAssertion,
     ...artifactAssertions,
     ...auditAssertions,
@@ -206,8 +207,10 @@ function reportAssertion(assertion) {
     if (isPlainObject(assertion.actual)) {
       console.log(`  ${log.greenify(log.tick)} ${assertion.name}`);
     } else {
+      const stringRepr = String(assertion.actual);
+      const maybeTruncated = stringRepr.length > 60 ? stringRepr.substr(0, 60) + '…' : stringRepr;
       console.log(`  ${log.greenify(log.tick)} ${assertion.name}: ` +
-          log.greenify(assertion.actual));
+          log.greenify(maybeTruncated));
     }
   } else {
     if (assertion.diff) {
