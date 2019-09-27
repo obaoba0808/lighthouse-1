@@ -6,8 +6,8 @@
 'use strict';
 
 // Example:
-//     node lighthouse-core/scripts/timings.js --name my-collection --collect -n 3 --lh-flags='--only-audits=unminified-javascript' --urls https://www.example.com https://www.nyt.com
-//     node lighthouse-core/scripts/timings.js --name my-collection --summarize --measure-filter 'loadPage|connect'
+//     node lighthouse-core/scripts/compare-timings.js --name my-collection --collect -n 3 --lh-flags='--only-audits=unminified-javascript' --urls https://www.example.com https://www.nyt.com
+//     node lighthouse-core/scripts/compare-timings.js --name my-collection --summarize --measure-filter 'loadPage|connect'
 
 const fs = require('fs');
 const {execSync} = require('child_process');
