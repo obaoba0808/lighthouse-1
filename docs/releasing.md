@@ -1,5 +1,7 @@
 ### Release guide for maintainers
 
+This doc is only relevant to core member.
+
 ## Release Policy
 
 ### Cadence
@@ -99,7 +101,7 @@ Confirm Lightrider integration will work:
 # Test things out locally, if happy, deploy to canary and see how the graphs react. 20 minutes should be enough time.
 
 # Do the stuff in "Test LR changes in Canary".
-# https://g3doc.corp.google.com/chrome/headless/lightrider/README.md?cl=head#test-lr-changes-in-canary
+# go/lightrider-doc#test-lr-changes-in-canary
 
 # Verify that Lightrider works properly, and is generating reports fully. Consider the new features that have been added.
 # Note: if the changes include proto changes make sure that the API has those new fields.
