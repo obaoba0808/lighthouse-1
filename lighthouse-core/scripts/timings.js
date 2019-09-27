@@ -102,26 +102,30 @@ function summarize() {
     /** @type {LH.Result} */
     const lhr = JSON.parse(lhrJson);
 
-    for (const measureName of lhr.timing.entries.map(entry => entry.name)) {
-      if (measureFilter && !measureFilter.test(measureName)) {
-        continue;
+    // Sum all measures of the same name.
+    const measuresSummed = lhr.timing.entries.reduce((acc, entry) => {
+      if (measureFilter && !measureFilter.test(entry.name)) {
+        return acc;
       }
 
-      const measuresKey = `${lhr.requestedUrl}@@@${measureName}`;
+      acc[entry.name] = acc[entry.name] || [];
+      acc[entry.name].push(entry.duration);
+      return acc;
+    }, {});
+
+    // Push the average of all the measures of each name.
+    for (const [name, durations] of Object.entries(measuresSummed)) {
+      const measuresKey = `${lhr.requestedUrl}@@@${name}`;
       let measures = measuresMap.get(measuresKey);
       if (!measures) {
         measures = [];
         measuresMap.set(measuresKey, measures);
       }
-
-      const measureEntry = lhr.timing.entries.find(measure => measure.name === measureName);
-      if (!measureEntry) throw new Error('missing measure');
-
-      measures.push(measureEntry.duration);
+      measures.push(average(durations));
     }
   }
 
-  const results = [...measuresMap.entries()].map(([measuresKey, measures]) => {
+  const results = [...measuresMap].map(([measuresKey, measures]) => {
     const [url, measureName] = measuresKey.split('@@@');
     const mean = average(measures);
     const min = Math.min(...measures);
