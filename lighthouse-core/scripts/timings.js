@@ -126,16 +126,16 @@ function summarize() {
     }
   }
 
-  const results = [...durationsMap].map(([measuresKey, measures]) => {
-    const [url, measureName] = measuresKey.split('@@@');
-    const mean = average(measures);
-    const min = Math.min(...measures);
-    const max = Math.max(...measures);
-    const stdev = sampleStdev(measures);
+  const results = [...durationsMap].map(([key, durations]) => {
+    const [url, entryName] = key.split('@@@');
+    const mean = average(durations);
+    const min = Math.min(...durations);
+    const max = Math.max(...durations);
+    const stdev = sampleStdev(durations);
     return {
-      measure: measureName,
+      measure: entryName,
       url,
-      n: measures.length,
+      n: durations.length,
       mean: round(mean),
       stdev: round(stdev),
       min: round(min),
