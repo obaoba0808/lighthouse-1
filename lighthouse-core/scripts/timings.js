@@ -43,8 +43,24 @@ const outputDir = `${ROOT_OUTPUT_DIR}/${argv.name}`;
 /**
  * @param {number[]} values
  */
+function sum(values) {
+  return values.reduce((sum, value) => sum + value);
+}
+
+/**
+ * @param {number[]} values
+ */
 function average(values) {
-  return values.reduce((sum, value) => sum + value) / values.length;
+  return sum(values) / values.length;
+}
+
+/**
+ * @param {number[]} values
+ */
+function sampleStdev(values) {
+  const mean = average(values);
+  const variance = sum(values.map(value => (value - mean) ** 2)) / (values.length - 1);
+  return Math.sqrt(variance);
 }
 
 /**
@@ -110,7 +126,7 @@ function summarize() {
     const mean = average(measures);
     const min = Math.min(...measures);
     const max = Math.max(...measures);
-    const stdev = Math.sqrt(average(measures.map(measure => (measure - mean) ** 2)));
+    const stdev = sampleStdev(measures);
     return {
       measure: measureName,
       url,
