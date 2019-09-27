@@ -112,7 +112,7 @@ function summarize() {
       acc[entry.name] = acc[entry.name] || [];
       acc[entry.name].push(entry.duration);
       return acc;
-    }, {});
+    }, /** @type {Record<string, number[]>} */ ({}));
 
     // Push the average of all the measures of each name.
     for (const [name, durationsForSingleRun] of Object.entries(measuresSummed)) {
