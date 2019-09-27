@@ -92,8 +92,9 @@ function collect() {
 }
 
 function summarize() {
+  // `${url}@@@${entry.name}` -> duration
   /** @type {Map<string, number[]>} */
-  const measuresMap = new Map();
+  const durationsMap = new Map();
   /** @type {RegExp|null} */
   const measureFilter = argv.measureFilter ? new RegExp(argv.measureFilter, 'i') : null;
 
@@ -114,18 +115,18 @@ function summarize() {
     }, {});
 
     // Push the average of all the measures of each name.
-    for (const [name, durations] of Object.entries(measuresSummed)) {
+    for (const [name, durationsForSingleRun] of Object.entries(measuresSummed)) {
       const measuresKey = `${lhr.requestedUrl}@@@${name}`;
-      let measures = measuresMap.get(measuresKey);
-      if (!measures) {
-        measures = [];
-        measuresMap.set(measuresKey, measures);
+      let durations = durationsMap.get(measuresKey);
+      if (!durations) {
+        durations = [];
+        durationsMap.set(measuresKey, durations);
       }
-      measures.push(average(durations));
+      durations.push(average(durationsForSingleRun));
     }
   }
 
-  const results = [...measuresMap].map(([measuresKey, measures]) => {
+  const results = [...durationsMap].map(([measuresKey, measures]) => {
     const [url, measureName] = measuresKey.split('@@@');
     const mean = average(measures);
     const min = Math.min(...measures);
